@@ -1,23 +1,23 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_gravity="center"
-    tools:context="net.rayray.popularmovies.DetailActivityFragment">
+    android:id="@+id/scrollView" >
 
-
-    <ImageView
-        android:layout_width="183dp"
-        android:layout_height="277dp"
-        android:gravity="center_horizontal"
-        android:id="@+id/posterImageView"
-        android:layout_gravity="center" />
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrollView" >
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        tools:context="net.rayray.popularmovies.DetailActivityFragment">
+
+        <ImageView
+            android:layout_width="183dp"
+            android:layout_height="277dp"
+            android:gravity="center_horizontal"
+            android:id="@+id/posterImageView"
+            android:layout_gravity="center" />
 
         <GridLayout
             android:layout_width="match_parent"
@@ -85,10 +85,6 @@
 
         </GridLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
-
-
-
-
-</LinearLayout>
+</ScrollView>

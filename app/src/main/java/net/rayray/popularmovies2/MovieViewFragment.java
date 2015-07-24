@@ -45,6 +45,9 @@ public class MovieViewFragment extends Fragment {
     // Movies is an array of a created class, Movie.
     private Movie[] mMovies;
 
+    // String capture of the "current" setting we're using, to compare when OnResume is called
+    private String sortSetting;
+
     public MovieViewFragment() {
     }
 
@@ -74,7 +77,8 @@ public class MovieViewFragment extends Fragment {
                 }
         );
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        movieTask.execute(sharedPref.getString("sort", "popularity.desc"));
+        sortSetting = sharedPref.getString("sort", "popularity.desc");
+        movieTask.execute(sortSetting);
 
     }
 
@@ -137,6 +141,20 @@ public class MovieViewFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Use our saved "sortSetting" value to determine if the sorting method has changed.  If it has
+        // then we refresh the movies to pull our new titles.
+        if (sortSetting != null) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            if (!sortSetting.equals(sharedPref.getString("sort", "popularity.desc"))) {
+                refreshMovies();
+            }
+        }
     }
 
     // Create a new array adapter to display the movie images.
