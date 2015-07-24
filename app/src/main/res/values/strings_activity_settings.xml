@@ -1,0 +1,11 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_sort_title">Sort Method</string>
+    <string name="pref_sort_key">sort</string>
+    <string name="pref_sort_default">popularity.desc</string>
+    <string name="pref_header_general">General Settings</string>
+
+</resources>

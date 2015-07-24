@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Display names for the Sorting preference -->
+    <string-array name="pref_sort_entries" translatable="false">
+        <item>Popularity</item>
+        <item>Average Vote Ratings</item>
+    </string-array>
+
+    <!-- Values for the Sorting preference -->
+    <string-array name="pref_sort_values" translatable="false">
+        <item>popularity.desc</item>
+        <item>vote_average.desc</item>
+    </string-array>
+
+</resources>
