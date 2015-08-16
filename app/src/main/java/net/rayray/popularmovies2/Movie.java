@@ -7,6 +7,7 @@ import android.os.Parcelable;
  * Created by rhawley on 7/23/15.
  */
 public class Movie implements Parcelable {
+    private int id;
     private String strTitle;
     private String strReleaseDate;
     private String strPosterPath;
@@ -15,6 +16,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(strTitle);
         dest.writeString(strReleaseDate);
         dest.writeString(strPosterPath);
@@ -27,7 +29,8 @@ public class Movie implements Parcelable {
         return 0;
     }
 
-    public Movie(String strTitle, String strReleaseDate, String strPosterPath, String strVoteAverage, String strSynopsis) {
+    public Movie(int id, String strTitle, String strReleaseDate, String strPosterPath, String strVoteAverage, String strSynopsis) {
+        this.id = id;
         this.strTitle = strTitle;
         this.strReleaseDate = strReleaseDate;
         this.strPosterPath = strPosterPath;
@@ -36,6 +39,7 @@ public class Movie implements Parcelable {
     }
 
     private Movie(Parcel in) {
+        this.id = in.readInt();
         this.strTitle = in.readString();
         this.strReleaseDate = in.readString();
         this.strPosterPath = in.readString();
@@ -54,25 +58,17 @@ public class Movie implements Parcelable {
         }
     };
 
-    public String getTitle() {
-        return strTitle;
-    }
+    public int getId() { return id; }
 
-    public String getReleaseDate() {
-        return strReleaseDate;
-    }
+    public String getTitle() { return strTitle; }
 
-    public String getPosterPath() {
-        return strPosterPath;
-    }
+    public String getReleaseDate() { return strReleaseDate; }
 
-    public String getVoteAverage() {
-        return strVoteAverage;
-    }
+    public String getPosterPath() { return strPosterPath; }
 
-    public String getSynopsis() {
-        return strSynopsis;
-    }
+    public String getVoteAverage() { return strVoteAverage; }
+
+    public String getSynopsis() { return strSynopsis; }
 
     public String getFullPosterPath() {
         return "http://image.tmdb.org/t/p/w185/" + strPosterPath;
