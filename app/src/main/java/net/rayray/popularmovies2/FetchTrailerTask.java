@@ -14,19 +14,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by rhawley on 8/15/15.
  */
-public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
+public class FetchTrailerTask extends AsyncTask<String, Void, Trailer[]> {
 
     // Create a callback interface for use with my ASyncTask
     public interface iCallBack {
-        public void onAsyncTaskCompleted(Review[] Reviews);
+        public void onAsyncTaskCompleted(Trailer[] Trailers);
     }
 
     // Create a log tag for when things go wrong
-    private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
+    private final String LOG_TAG = FetchTrailerTask.class.getSimpleName();
 
     // My db API key is now stored in its own class, ignored in Git.
     // You can add the file, and include:
@@ -38,15 +39,15 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
     private iCallBack CallBack;
 
     // Create a Movie Array
-    private Review[] Reviews;
+    private Trailer[] Trailers;
 
-    public FetchReviewsTask(iCallBack CallBack) {
+    public FetchTrailerTask(iCallBack CallBack) {
         super();
         this.CallBack = CallBack;
     }
 
     @Override
-    protected Review[] doInBackground(String... params) {
+    protected Trailer[] doInBackground(String... params) {
 
         // If we didn't get the setting for how to sort the movies, quit.
         if (params.length == 0) {
@@ -58,12 +59,12 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
         BufferedReader reader = null;
 
         // JSON response as string
-        String reviewInfoStr = null;
+        String trailerInfoStr = null;
 
         try {
             // Make the URL for the API query
             final String MOVIE_ID = params[0];
-            final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + MOVIE_ID + "/reviews?";
+            final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + MOVIE_ID + "/videos?";
             Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                     .appendQueryParameter("api_key", API_KEY)
                     .build();
@@ -94,7 +95,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
                 return null;
             }
 
-            reviewInfoStr = buffer.toString();
+            trailerInfoStr = buffer.toString();
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -114,8 +115,8 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
         }
 
         try {
-            this.Reviews = getReviewArray(reviewInfoStr);
-            return this.Reviews;
+            this.Trailers = getTrailerArray(trailerInfoStr);
+            return this.Trailers;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -127,37 +128,48 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
     }
 
     @Override
-    protected void onPostExecute(Review[] Reviews) {
-        CallBack.onAsyncTaskCompleted(Reviews);
+    protected void onPostExecute(Trailer[] Trailers) {
+        CallBack.onAsyncTaskCompleted(Trailers);
     }
 
-    private Review[] getReviewArray(String reviewInfoStr)
+    private Trailer[] getTrailerArray(String trailerInfoStr)
             throws JSONException {
 
         // The following info will be retrieved from the JSON string,
-        // and then added to an array of Reviews which will be returned
-        // Reviewer - author
+        // and then parsed to return the various videos whose type is "trailer"
+        // it is also being parsed to only return those items that are on Youtube
         // Review - content
 
         final String MDB_RESULTS = "results";
-        final String MDB_REVIEWER = "author";
-        final String MDB_REVIEW = "content";
+        final String MDB_YOUTUBE_KEY = "key";
+        final String MDB_NAME = "name";
+        final String MDB_TYPE = "type";
+        final String MDB_SITE = "site";
 
-        JSONObject reviewJson = new JSONObject(reviewInfoStr);
-        JSONArray reviewArray = reviewJson.getJSONArray(MDB_RESULTS);
+        JSONObject trailerJson = new JSONObject(trailerInfoStr);
+        JSONArray trailerArray = trailerJson.getJSONArray(MDB_RESULTS);
 
-        Review[] Reviews = new Review[reviewArray.length()];
+        ArrayList<Trailer> tmpTrailer = new ArrayList<Trailer>(trailerArray.length());
 
-        for (int i = 0; i < reviewArray.length(); i++) {
-            // Create a new Movie in the Movies array for each movie returned
-            JSONObject reviewInfo = reviewArray.getJSONObject(i);
+        for (int i = 0; i < trailerArray.length(); i++) {
+            // Create a new Trailer in the Trailer ArrayList for each item
+            // that has a type of "trailer" and a site of "youtube"
+            JSONObject trailerInfo = trailerArray.getJSONObject(i);
 
-            String strReviewer = reviewInfo.getString(MDB_REVIEWER);
-            String strReview = reviewInfo.getString(MDB_REVIEW);
-
-            Reviews[i] = new Review(strReviewer, strReview);
+            if (trailerInfo.getString(MDB_TYPE).equals("Trailer") && trailerInfo.getString(MDB_SITE).equals("YouTube")) {
+                String strName = trailerInfo.getString(MDB_NAME);
+                String strYoutubeKey = trailerInfo.getString(MDB_YOUTUBE_KEY);
+                tmpTrailer.add(new Trailer(strName,strYoutubeKey));
+            }
         }
-        return Reviews;
+
+        tmpTrailer.trimToSize();
+
+        Trailer[] Trailers = new Trailer[tmpTrailer.size()];
+
+        tmpTrailer.toArray(Trailers);
+
+        return Trailers;
     }
 
 }

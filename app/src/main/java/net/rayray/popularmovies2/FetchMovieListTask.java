@@ -28,7 +28,10 @@ public class FetchMovieListTask extends AsyncTask<String, Void, Movie[]> {
     // Create a log tag for when things go wrong
     private final String LOG_TAG = FetchMovieListTask.class.getSimpleName();
 
-    // My db API key
+    // My db API key is now stored in its own class, ignored in Git.
+    // You can add the file, and include:
+    // private static final String AK="yourkeygoeshere"
+    // or replace API.AK with your own key;
     private final String API_KEY = API.AK;
 
     // Create a callback
