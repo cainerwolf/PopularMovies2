@@ -30,7 +30,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
 
     // My db API key is now stored in its own class, ignored in Git.
     // You can add the file, and include:
-    // private static final String AK="yourkeygoeshere"
+    // public static final String AK="yourkeygoeshere"
     // or replace API.AK with your own key;
     private final String API_KEY = API.AK;
 

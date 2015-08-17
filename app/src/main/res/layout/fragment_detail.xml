@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="center"
     tools:context="net.rayray.popularmovies.DetailActivityFragment">
 
     <ScrollView
@@ -16,15 +15,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_gravity="center"
-            tools:context="net.rayray.popularmovies.DetailActivityFragment">
+            android:id="@+id/llDetails" >
 
             <ImageView
                 android:layout_width="183dp"
                 android:layout_height="277dp"
                 android:gravity="center_horizontal"
                 android:id="@+id/posterImageView"
-                android:layout_gravity="center" />
+                android:layout_gravity="center_horizontal" />
 
             <GridLayout
                 android:layout_width="match_parent"
@@ -92,33 +90,39 @@
 
             </GridLayout>
 
-            <View style="@style/Divider" />
-
-            <TextView
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/tvTrailer"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/trailers" />
+                android:layout_height="wrap_content"
+                android:id="@+id/llTrailerContainer"
+                android:visibility="gone">
 
-            <ListView
+                <View style="@style/Divider" /> 
+
+                <TextView android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tvTrailers"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/trailers" />
+
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/lvTrailers" />
+                android:layout_height="wrap_content"
+                android:id="@+id/llReviewContainer"
+                android:visibility="gone">
 
-            <View style="@style/Divider" />
+                <View style="@style/Divider" /> 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/tvReviews"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/reviews" />
+                <TextView android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tvReviews"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/reviews" />
 
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/lvReviews" />
+            </LinearLayout>
 
         </LinearLayout>
 
