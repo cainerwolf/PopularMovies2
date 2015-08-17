@@ -92,6 +92,34 @@
 
             </GridLayout>
 
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/tvTrailer"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/trailers" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lvTrailers" />
+
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/tvReviews"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/reviews" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lvReviews" />
+
         </LinearLayout>
 
     </ScrollView>

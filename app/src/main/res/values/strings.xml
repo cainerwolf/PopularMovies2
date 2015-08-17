@@ -5,5 +5,7 @@
     <string name="voter_average">Voter Average</string>
     <string name="release_date">Release Date</string>
     <string name="summary">Summary</string>
-
+    <string name="trailers">Trailers</string>
+    <string name="reviews">Reviews</string>
+    <string name="none_found">None Found</string>
 </resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="?android:attr/listPreferredItemHeightSmall"
+        android:id="@+id/ivYouTubeIcon"
+        android:src="@mipmap/youtube_icon" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="?android:attr/listPreferredItemHeightSmall"
+        android:id="@+id/tvTrailer"
+        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+        android:text="Trailer Name" />
+
+</LinearLayout>
