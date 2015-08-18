@@ -6,6 +6,8 @@
     android:orientation="vertical"
     tools:context="net.rayray.popularmovies.DetailActivityFragment">
 
+    <!-- TODO: Put the rest of the element view styles into styles.xml -->
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,12 +19,8 @@
             android:orientation="vertical"
             android:id="@+id/llDetails" >
 
-            <ImageView
-                android:layout_width="183dp"
-                android:layout_height="277dp"
-                android:gravity="center_horizontal"
-                android:id="@+id/posterImageView"
-                android:layout_gravity="center_horizontal" />
+            <ImageView style="@style/DetailPoster"
+                android:id="@+id/posterImageView" />
 
             <GridLayout
                 android:layout_width="match_parent"
@@ -31,23 +29,13 @@
                 android:columnCount="2"
                 android:rowCount="5">
 
-                <TextView
-                    android:gravity="center_horizontal"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/titleTextView"
-                    android:layout_column="0"
-                    android:layout_columnSpan="2"
-                    android:layout_row="0"
-                    android:layout_gravity="fill_horizontal|center_horizontal" />
+                <TextView style="@style/TitleTextView"
+                    android:id="@+id/titleTextView" />
 
-                <TextView
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/voter_average"
+                <TextView style="@style/VoteAverageTextView"
                     android:id="@+id/tvVoteAverage"
-                    android:layout_gravity="right"
                     android:layout_column="0"
-                    android:layout_row="1"
-                    android:paddingRight="@dimen/activity_horizontal_margin" />
+                    android:layout_row="1" />
 
                 <TextView
                     android:textAppearance="?android:attr/textAppearanceSmall"
@@ -90,36 +78,32 @@
 
             </GridLayout>
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
+                android:id="@+id/llTrailerContainer"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/llTrailerContainer"
                 android:visibility="gone">
 
                 <View style="@style/Divider" /> 
 
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                <TextView style="@style/DetailHeader"
                     android:id="@+id/tvTrailers"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/trailers" />
 
             </LinearLayout>
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
+                android:id="@+id/llReviewContainer"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/llReviewContainer"
                 android:visibility="gone">
 
                 <View style="@style/Divider" /> 
 
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                <TextView style="@style/DetailHeader"
                     android:id="@+id/tvReviews"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/reviews" />
 
             </LinearLayout>

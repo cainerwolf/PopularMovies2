@@ -12,4 +12,34 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
+    <style name="DetailPoster">
+        <item name="android:layout_width">183dp</item>
+        <item name="android:layout_height">277dp</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="TitleTextView">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:layout_column">0</item>
+        <item name="android:layout_columnSpan">2</item>
+        <item name="android:layout_row">0</item>
+        <item name="android:layout_gravity">fill_horizontal|center_horizontal</item>
+    </style>
+
+    <style name="VoteAverageTextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:text">@string/voter_average</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+    </style>
+
+    <style name="DetailHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:padding">@dimen/detail_header_margin</item>
+    </style>
+
 </resources>

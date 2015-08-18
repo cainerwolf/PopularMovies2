@@ -22,6 +22,10 @@ import com.squareup.picasso.Picasso;
 public class DetailActivityFragment extends Fragment {
 
     public DetailActivityFragment() {
+
+        //TODO: Make the title bar thing permanent
+        //TODO: Adjust styles to include color changes
+        //TODO: Adjust the reviewer XML style so that the color change is in styles.xml
     }
 
     @Override
@@ -64,14 +68,8 @@ public class DetailActivityFragment extends Fragment {
 
             LinearLayout trailerContainer = (LinearLayout) rootView.findViewById(R.id.llTrailerContainer);
 
-            for (int i=0; i < Test.length; i++) {
-                TrailerView trailer = new TrailerView(this.getActivity().getBaseContext());
-                trailer.setText(Test[i].getName());
-                trailer.doOnClick(Test[i].getYoutubeKey());
-                trailerContainer.addView(trailer);
-            }
+            updateTrailers(trailerContainer, Test);
 
-            trailerContainer.setVisibility(View.VISIBLE);
 
             Review[] Testr = {
                     new Review("Reviewer 1", "This movie was so overrated I almost puked in my popcorn bucket."),
@@ -81,19 +79,52 @@ public class DetailActivityFragment extends Fragment {
 
             LinearLayout reviewContainer = (LinearLayout) rootView.findViewById(R.id.llReviewContainer);
 
-            for (int i=0; i< Testr.length; i++) {
-                ReviewView review = new ReviewView(this.getActivity().getBaseContext());
-                review.setText(Testr[i].getReviewer(), Testr[i].getReview());
-                reviewContainer.addView(review);
-            }
-
-            reviewContainer.setVisibility(View.VISIBLE);
+            updateReviews(reviewContainer, Testr);
 
             getActivity().setTitle(titleStr);
 
         }
 
         return rootView;
+    }
+
+    private void updateTrailers(LinearLayout trailerContainer, Trailer[] trailers) {
+
+        // Get our initial Child Count
+        int initialChildCount = trailerContainer.getChildCount();
+
+        // Add our trailers
+        for (int i=0; i < trailers.length; i++) {
+            TrailerView trailer = new TrailerView(this.getActivity().getBaseContext());
+            trailer.setText(trailers[i].getName());
+            trailer.doOnClick(trailers[i].getYoutubeKey());
+            trailerContainer.addView(trailer);
+        }
+
+        // If we added anything to the container, then make the container visible
+        if ( trailerContainer.getChildCount() > initialChildCount ) {
+            trailerContainer.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private void updateReviews(LinearLayout reviewContainer, Review[] reviews) {
+
+        //get our initial Child Count
+        int initialChildCount = reviewContainer.getChildCount();
+
+        // Add our reviews
+        for (int i=0; i< reviews.length; i++) {
+            ReviewView review = new ReviewView(this.getActivity().getBaseContext());
+            review.setText(reviews[i].getReviewer(), reviews[i].getReview());
+            reviewContainer.addView(review);
+        }
+
+        // If we added anything to the container, then make the container visible
+        if ( reviewContainer.getChildCount() > initialChildCount ) {
+            reviewContainer.setVisibility(View.VISIBLE);
+        }
+
     }
 
     // Childview class example taken from http://stackoverflow.com/questions/14798826/duplicate-views-on-android-during-run-time
