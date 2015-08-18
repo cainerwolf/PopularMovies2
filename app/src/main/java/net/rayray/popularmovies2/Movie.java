@@ -70,6 +70,8 @@ public class Movie implements Parcelable {
 
     public String getSynopsis() { return strSynopsis; }
 
+    public String getIdAsString() { return Integer.toString(id); }
+
     public String getFullPosterPath() {
         return "http://image.tmdb.org/t/p/w185/" + strPosterPath;
     }

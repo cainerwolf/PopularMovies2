@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +22,25 @@ import com.squareup.picasso.Picasso;
  */
 public class DetailActivityFragment extends Fragment {
 
+    private Movie movie;
+    private Trailer[] trailers;
+    private Review[] reviews;
+
     public DetailActivityFragment() {
 
         //TODO: Make the title bar thing permanent
         //TODO: Adjust styles to include color changes
         //TODO: Adjust the reviewer XML style so that the color change is in styles.xml
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArray("trailers", trailers);
+        outState.putParcelableArray("reviews", reviews);
+        outState.putParcelable("movie", movie);
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +50,7 @@ public class DetailActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         if (intent.hasExtra("movie") && intent != null) {
             //Get the movie object from the Intent
-            Movie movie = intent.getParcelableExtra("movie");
+            movie = intent.getParcelableExtra("movie");
 
             // Create our objects for the ImageView and TextViews that need to be populated
             ImageView posterImageView = (ImageView) rootView.findViewById(R.id.posterImageView);
@@ -60,26 +74,31 @@ public class DetailActivityFragment extends Fragment {
             releaseDateTextView.setText(releaseDateStr);
             synopsisTextView.setText(synopsisStr);
 
-            Trailer[] Test = {
-                new Trailer("Trailer 1", "kkkkkkkkk"),
-                new Trailer("Trailer 2", "jjjjjjjjj"),
-                new Trailer("Trailer 3", "lllllllll")
-            };
+            if (savedInstanceState == null || !savedInstanceState.containsKey("trailers")) {
+                refreshTrailers();
+                Log.v("WEDIDSOMETHING", "We refreshed the trailers.");
+            } else {
+                Parcelable[] pa = savedInstanceState.getParcelableArray("trailers");
+                trailers = new Trailer[pa.length];
+                for (int i = 0; i<pa.length; i++) {
+                    trailers[i] = (Trailer) pa[i];
+                }
+                updateTrailers((LinearLayout) rootView.findViewById(R.id.llTrailerContainer), trailers);
+            }
 
-            LinearLayout trailerContainer = (LinearLayout) rootView.findViewById(R.id.llTrailerContainer);
+            if (savedInstanceState == null || !savedInstanceState.containsKey("reviews")) {
+                refreshReviews();
+                Log.v("WEDIDSOMETHING", "We refreshed the reviews.");
+            } else {
+                Parcelable[] pa = savedInstanceState.getParcelableArray("reviews");
+                reviews = new Review[pa.length];
+                for (int i = 0; i < pa.length ; i++ ) {
+                    reviews[i] = (Review) pa[i];
+                }
+                updateReviews((LinearLayout) rootView.findViewById(R.id.llReviewContainer), reviews);
+            }
 
-            updateTrailers(trailerContainer, Test);
-
-
-            Review[] Testr = {
-                    new Review("Reviewer 1", "This movie was so overrated I almost puked in my popcorn bucket."),
-                    new Review("Reviewer 2", "I can't believe they actually got people to make this movie, it seems like such a waste of money.  I want my $12 back, the 3d was dumb too."),
-                    new Review("Reviewer 3", "It was ok.")
-            };
-
-            LinearLayout reviewContainer = (LinearLayout) rootView.findViewById(R.id.llReviewContainer);
-
-            updateReviews(reviewContainer, Testr);
+            //updateReviews((LinearLayout) rootView.findViewById(R.id.llReviewContainer),Testr);
 
             getActivity().setTitle(titleStr);
 
@@ -88,7 +107,15 @@ public class DetailActivityFragment extends Fragment {
         return rootView;
     }
 
-    private void updateTrailers(LinearLayout trailerContainer, Trailer[] trailers) {
+    private void updateTrailers(LinearLayout container, Trailer[] trailers) {
+
+        LinearLayout trailerContainer;
+
+        if (container == null) {
+            trailerContainer = (LinearLayout) getActivity().findViewById(R.id.llTrailerContainer);
+        } else {
+            trailerContainer = container;
+        }
 
         // Get our initial Child Count
         int initialChildCount = trailerContainer.getChildCount();
@@ -108,7 +135,15 @@ public class DetailActivityFragment extends Fragment {
 
     }
 
-    private void updateReviews(LinearLayout reviewContainer, Review[] reviews) {
+    private void updateReviews(LinearLayout container, Review[] reviews) {
+
+        LinearLayout reviewContainer;
+
+        if (container ==null) {
+            reviewContainer = (LinearLayout) getActivity().findViewById(R.id.llReviewContainer);
+        } else {
+            reviewContainer = container;
+        }
 
         //get our initial Child Count
         int initialChildCount = reviewContainer.getChildCount();
@@ -125,6 +160,34 @@ public class DetailActivityFragment extends Fragment {
             reviewContainer.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    public void refreshTrailers() {
+
+        FetchTrailerTask trailerTask = new FetchTrailerTask(
+                new FetchTrailerTask.iCallBack() {
+                    @Override
+                    public void onAsyncTaskCompleted(Trailer[] Trailers) {
+                        trailers = Trailers;
+                        updateTrailers(null, trailers);
+                    }
+                }
+        );
+        trailerTask.execute(movie.getIdAsString());
+    }
+
+    public void refreshReviews () {
+
+        FetchReviewsTask reviewsTask = new FetchReviewsTask(
+                new FetchReviewsTask.iCallBack() {
+                    @Override
+                    public void onAsyncTaskCompleted(Review[] Reviews) {
+                        reviews = Reviews;
+                        updateReviews(null, reviews);
+                    }
+                }
+        );
+        reviewsTask.execute(movie.getIdAsString());
     }
 
     // Childview class example taken from http://stackoverflow.com/questions/14798826/duplicate-views-on-android-during-run-time

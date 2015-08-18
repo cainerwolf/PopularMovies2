@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,7 +118,12 @@ public class MovieViewFragment extends Fragment {
             refreshMovies();
         }
         else {
-            mMovies = (Movie[]) savedInstanceState.getParcelableArray("movies");
+            Parcelable[] pa = savedInstanceState.getParcelableArray("movies");
+            mMovies = new Movie[pa.length];
+            for (int i = 0; i < pa.length ; i++ ) {
+                mMovies[i] = (Movie) pa[i];
+            }
+//            mMovies = (Movie[]) savedInstanceState.getParcelableArray("movies");
             updateMovieGrid(mMovies);
         }
 
