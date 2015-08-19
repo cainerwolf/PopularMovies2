@@ -3,6 +3,7 @@ package net.rayray.popularmovies2;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -30,7 +31,6 @@ public class DetailActivityFragment extends Fragment {
 
         //TODO: Make the title bar thing permanent
         //TODO: Adjust styles to include color changes
-        //TODO: Adjust the reviewer XML style so that the color change is in styles.xml
     }
 
     @Override
@@ -76,7 +76,6 @@ public class DetailActivityFragment extends Fragment {
 
             if (savedInstanceState == null || !savedInstanceState.containsKey("trailers")) {
                 refreshTrailers();
-                Log.v("WEDIDSOMETHING", "We refreshed the trailers.");
             } else {
                 Parcelable[] pa = savedInstanceState.getParcelableArray("trailers");
                 trailers = new Trailer[pa.length];
@@ -88,7 +87,6 @@ public class DetailActivityFragment extends Fragment {
 
             if (savedInstanceState == null || !savedInstanceState.containsKey("reviews")) {
                 refreshReviews();
-                Log.v("WEDIDSOMETHING", "We refreshed the reviews.");
             } else {
                 Parcelable[] pa = savedInstanceState.getParcelableArray("reviews");
                 reviews = new Review[pa.length];
@@ -97,8 +95,6 @@ public class DetailActivityFragment extends Fragment {
                 }
                 updateReviews((LinearLayout) rootView.findViewById(R.id.llReviewContainer), reviews);
             }
-
-            //updateReviews((LinearLayout) rootView.findViewById(R.id.llReviewContainer),Testr);
 
             getActivity().setTitle(titleStr);
 
@@ -214,23 +210,20 @@ public class DetailActivityFragment extends Fragment {
 
             final String newText = text;
 
-            tv.setOnClickListener(new OnClickListener() {
+            OnClickListener click = new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast t = Toast.makeText(getActivity(), newText, Toast.LENGTH_SHORT);
-                    t.show();
-                    Log.v("CLICKY", newText);
+                    // Youtube Intent taken from http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
+                    Intent intent = new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("http://www.youtube.com/watch?v=" + newText));
+                    startActivity(intent);
                 }
-            });
+            };
 
-            iv.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast t = Toast.makeText(getActivity(), newText, Toast.LENGTH_SHORT);
-                    t.show();
-                    Log.v("CLICKY", newText );
-                }
-            });
+            tv.setOnClickListener(click);
+
+            iv.setOnClickListener(click);
 
         }
 
