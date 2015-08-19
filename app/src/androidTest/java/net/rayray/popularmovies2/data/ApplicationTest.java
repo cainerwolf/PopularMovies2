@@ -36,7 +36,7 @@ public class ApplicationTest extends AndroidTestCase {
         deleteDatabase();
     }
 
-    static long testThings(Context context) {
+    public void FirstTest(Context context) {
         MovieDbHelper dbHelper = new MovieDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues testValues = createCV();
@@ -45,8 +45,6 @@ public class ApplicationTest extends AndroidTestCase {
         locationRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
 
         assertTrue("Error: Failure to insert North Pole Location Values", locationRowId != -1);
-
-        return locationRowId;
     }
 
 }

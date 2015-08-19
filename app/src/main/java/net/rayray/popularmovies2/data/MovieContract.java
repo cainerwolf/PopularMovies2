@@ -64,6 +64,11 @@ public class MovieContract {
             return Integer.parseInt(uri.getPathSegments().get(2));
         }
 
+        public static Uri buildMovieDetail(int movieId) {
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(movieId)).build();
+        }
+
+
     }
 
     public static final class TrailerEntry implements BaseColumns {
@@ -94,6 +99,11 @@ public class MovieContract {
         public static int getIdFromUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(2));
         }
+
+        public static Uri buildTrailer(int movieId) {
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(movieId)).build();
+        }
+
 
     }
 
@@ -126,5 +136,11 @@ public class MovieContract {
             return Integer.parseInt(uri.getPathSegments().get(2));
         }
 
+        public static Uri buildReview(int movieId) {
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(movieId)).build();
+        }
+
+
     }
+
 }
