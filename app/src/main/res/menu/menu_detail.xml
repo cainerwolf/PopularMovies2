@@ -1,6 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="net.rayray.popularmovies2.DetailActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_favorite"
+        android:title="Favorite"
+        android:orderInCategory="99"
+        android:icon="@mipmap/ic_star_border_black_48dp"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
 </menu>

@@ -3,11 +3,13 @@ package net.rayray.popularmovies2;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -26,6 +31,45 @@ public class DetailActivityFragment extends Fragment {
     private Movie movie;
     private Trailer[] trailers;
     private Review[] reviews;
+    private SharedPreferences sharedPref;
+
+    private Set<String> favoritesTemp = new HashSet<String>();
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if ( id == R.id.action_favorite ) {
+            doFavorite();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isFavorite() {
+        return favoritesTemp.contains(movie.getIdAsString());
+    }
+
+    public void doFavorite() {
+
+        if ( isFavorite() ) {
+            Toast.makeText(getActivity().getApplicationContext(), "Removing Favorite!", Toast.LENGTH_SHORT).show();
+            favoritesTemp.remove(movie.getIdAsString());
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), "Adding Favorite!", Toast.LENGTH_SHORT).show();
+            favoritesTemp.add(movie.getIdAsString());
+        }
+
+        updateIcon();
+    }
+
+    // This updates the Favorite Icon by forcing the activity to redraw the action bar
+    public void updateIcon () {
+
+        getActivity().invalidateOptionsMenu();
+
+    }
 
     public DetailActivityFragment() {
 
@@ -39,6 +83,35 @@ public class DetailActivityFragment extends Fragment {
         outState.putParcelableArray("reviews", reviews);
         outState.putParcelable("movie", movie);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Make sure the activity knows that this fragment handles menu options
+        setHasOptionsMenu(true);
+
+        // Get SharedPreferences, the favorites list, and the Favorite menu item
+        this.sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        Menu tempMenu = DetailActivity.getMenu();
+//        Log.v("HEREHERE", "Temp Menu size is " + Integer.toString(tempMenu.size()));
+//        Log.v("HEREHERE", "Action Favorite is " + Integer.toString(R.id.action_favorite));
+//        this.favMenuItem = DetailActivity.getMenu().findItem(R.id.action_favorite);
+//        this.favMenuItem = tempMenu.findItem(R.id.action_favorite);
+
+        // TODO: Replace this with the actual favorites menu
+        Set<String> favorites = sharedPref.getStringSet("favorites", null);
+        if ( favorites == null ) {
+            favoritesTemp.clear();
+            favoritesTemp.add("211672");
+            favoritesTemp.add("157336");
+            favoritesTemp.add("76341");
+        } else {
+            favoritesTemp.clear();
+            favoritesTemp.addAll(favorites);
+        }
+
     }
 
 

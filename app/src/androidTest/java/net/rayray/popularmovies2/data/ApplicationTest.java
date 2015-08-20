@@ -1,15 +1,12 @@
 package net.rayray.popularmovies2.data;
 
-import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
-import android.test.ApplicationTestCase;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import net.rayray.popularmovies2.Movie;
-import net.rayray.popularmovies2.data.MovieContract;
-import net.rayray.popularmovies2.data.MovieDbHelper;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -36,7 +33,8 @@ public class ApplicationTest extends AndroidTestCase {
         deleteDatabase();
     }
 
-    public void FirstTest(Context context) {
+    @SmallTest
+    public void testFirst(Context context) {
         MovieDbHelper dbHelper = new MovieDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues testValues = createCV();
@@ -44,7 +42,8 @@ public class ApplicationTest extends AndroidTestCase {
         long locationRowId;
         locationRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
 
-        assertTrue("Error: Failure to insert North Pole Location Values", locationRowId != -1);
+        assertTrue("Error: Failure to insert data", locationRowId != -1);
+        assertTrue(false);
     }
 
 }

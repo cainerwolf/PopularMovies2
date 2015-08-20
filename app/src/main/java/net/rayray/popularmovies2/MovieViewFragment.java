@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,20 +49,25 @@ public class MovieViewFragment extends Fragment {
     // This will update the movie posters on the main page by starting a new fetch of data
     public void refreshMovies() {
 
-        FetchMovieListTask movieTask = new FetchMovieListTask(
-                new FetchMovieListTask.iCallBack() {
-
-                    @Override
-                    public void onAsyncTaskCompleted(Movie[] Movies) {
-                        mMovies = Movies;
-                        updateMovieGrid(mMovies);
-                    }
-
-                }
-        );
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sortSetting = sharedPref.getString("sort", "popularity.desc");
-        movieTask.execute(sortSetting);
+
+        if (sortSetting.equals("favorites")) { Log.v("Favorite", "WE'VE SELECTED FAVORITE, PEOPLE"); }
+        else {
+
+            FetchMovieListTask movieTask = new FetchMovieListTask(
+                    new FetchMovieListTask.iCallBack() {
+
+                        @Override
+                        public void onAsyncTaskCompleted(Movie[] Movies) {
+                            mMovies = Movies;
+                            updateMovieGrid(mMovies);
+                        }
+
+                    }
+            );
+            movieTask.execute(sortSetting);
+        }
 
     }
 
