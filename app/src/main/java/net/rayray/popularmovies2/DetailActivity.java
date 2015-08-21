@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class DetailActivity extends Activity {
 
-    private String movieId = "0";
+    private String movieId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class DetailActivity extends Activity {
         if ( intent.hasExtra("movie") ) {
             Movie movie = intent.getParcelableExtra("movie");
             this.movieId = movie.getIdAsString();
-            // Refresh the options menu now that we have the movie
+            // Refresh the options menu now that we have the movie id
             invalidateOptionsMenu();
         }
 
@@ -41,28 +41,20 @@ public class DetailActivity extends Activity {
         // Get favorites icon
         MenuItem favItem = menu.findItem(R.id.action_favorite);
 
-        // Get shared preferences
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        //TODO: Remove all this once we get the preferences actually in
-        Set<String> prefFavorites = sharedPref.getStringSet("favorites", null);
-        Set<String> favoritesTemp = new HashSet<String>();
-        if ( prefFavorites == null ) {
-            favoritesTemp.clear();
-            favoritesTemp.add("211672");
-            favoritesTemp.add("157336");
-            favoritesTemp.add("76341");
-        } else {
-            favoritesTemp.clear();
-            favoritesTemp.addAll(prefFavorites);
+        // Check to see if we have the movie ID yet, and if we do let's see if its a favorite
+        if ( this.movieId != null ) {
+            // Get the list of favorite movies from Shared Preferences
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            Set<String> prefFavorites = sharedPref.getStringSet("favorites", new HashSet<String>());
+
+            // If the movie is a favorite, make sure we use the filled-in star icon
+            // If the movie is not a favorite, use the empty star icon
+            if (prefFavorites.contains(movieId)) {
+                favItem.setIcon(R.mipmap.ic_star_black_48dp);
+            } else {
+                favItem.setIcon(R.mipmap.ic_star_border_black_48dp);
+            }
         }
-
-        if ( favoritesTemp.contains(movieId) ) {
-            favItem.setIcon(R.mipmap.ic_star_black_48dp );
-        } else {
-            favItem.setIcon(R.mipmap.ic_star_border_black_48dp);
-        }
-
-
 
         return true;
     }

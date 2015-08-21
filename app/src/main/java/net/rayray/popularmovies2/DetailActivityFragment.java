@@ -28,11 +28,16 @@ import java.util.Set;
  */
 public class DetailActivityFragment extends Fragment {
 
+    // Create class variables for the movie, the trailer array, and the review array
     private Movie movie;
     private Trailer[] trailers;
     private Review[] reviews;
+
+    // Create a shared preferences object for use with determining and adding/removing movie favorites
     private SharedPreferences sharedPref;
 
+    // Temporary Set<String> to hold the favorites in, so we aren't messing with the set returned
+    // from SharedPreferences
     private Set<String> favoritesTemp = new HashSet<String>();
 
     @Override
@@ -41,39 +46,43 @@ public class DetailActivityFragment extends Fragment {
         int id = item.getItemId();
 
         if ( id == R.id.action_favorite ) {
-            doFavorite();
+            adjustFavorite();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    // Check to see if the movie is a favorite
     public boolean isFavorite() {
         return favoritesTemp.contains(movie.getIdAsString());
     }
 
-    public void doFavorite() {
+
+    // This happens when someone clicks the "favorite" icon in the action bar
+    // If the movie is already a favorite, then remove it from the favorites.
+    // If the movie is not a favorite, then add it to the favorites
+    public void adjustFavorite() {
 
         if ( isFavorite() ) {
             Toast.makeText(getActivity().getApplicationContext(), "Removing Favorite!", Toast.LENGTH_SHORT).show();
             favoritesTemp.remove(movie.getIdAsString());
+            SharedPreferences.Editor sharedPrefEditor = sharedPref.edit();
+            sharedPrefEditor.putStringSet("favorites", favoritesTemp);
+            sharedPrefEditor.apply();
         } else {
             Toast.makeText(getActivity().getApplicationContext(), "Adding Favorite!", Toast.LENGTH_SHORT).show();
             favoritesTemp.add(movie.getIdAsString());
+            SharedPreferences.Editor sharedPrefEditor = sharedPref.edit();
+            sharedPrefEditor.putStringSet("favorites", favoritesTemp);
+            sharedPrefEditor.apply();
         }
 
-        updateIcon();
-    }
-
-    // This updates the Favorite Icon by forcing the activity to redraw the action bar
-    public void updateIcon () {
-
+        // This updates the Favorite Icon by forcing the activity to redraw the action bar
         getActivity().invalidateOptionsMenu();
-
     }
 
     public DetailActivityFragment() {
 
-        //TODO: Make the title bar thing permanent
         //TODO: Adjust styles to include color changes
     }
 
@@ -92,28 +101,23 @@ public class DetailActivityFragment extends Fragment {
         // Make sure the activity knows that this fragment handles menu options
         setHasOptionsMenu(true);
 
-        // Get SharedPreferences, the favorites list, and the Favorite menu item
+        // Get SharedPreferences
         this.sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//        Menu tempMenu = DetailActivity.getMenu();
-//        Log.v("HEREHERE", "Temp Menu size is " + Integer.toString(tempMenu.size()));
-//        Log.v("HEREHERE", "Action Favorite is " + Integer.toString(R.id.action_favorite));
-//        this.favMenuItem = DetailActivity.getMenu().findItem(R.id.action_favorite);
-//        this.favMenuItem = tempMenu.findItem(R.id.action_favorite);
 
-        // TODO: Replace this with the actual favorites menu
+        // Create a temporary String Set based on the set returned from SharedPreferences
+        // Based on comments made here, it is a bad idea to change any within the set returned
+        // by Shared Preferences
+        // http://developer.android.com/reference/android/content/SharedPreferences.html#getStringSet(java.lang.String, java.util.Set<java.lang.String>)
+        // If the set returned from SharedPreferences is null (there are no SharedPreferences)
+        // then we'll just make sure our temporary set is empty
         Set<String> favorites = sharedPref.getStringSet("favorites", null);
         if ( favorites == null ) {
             favoritesTemp.clear();
-            favoritesTemp.add("211672");
-            favoritesTemp.add("157336");
-            favoritesTemp.add("76341");
         } else {
             favoritesTemp.clear();
             favoritesTemp.addAll(favorites);
         }
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,7 +136,6 @@ public class DetailActivityFragment extends Fragment {
             TextView releaseDateTextView = (TextView) rootView.findViewById(R.id.releaseDateTextView);
             TextView synopsisTextView = (TextView) rootView.findViewById(R.id.synopsisTextView);
 
-
             // Get our Strings from the movie object passed in the Intent
             String url = movie.getFullPosterPath();
             String titleStr = movie.getTitle();
@@ -146,6 +149,10 @@ public class DetailActivityFragment extends Fragment {
             voteAverageTextView.setText(voteAverageStr);
             releaseDateTextView.setText(releaseDateStr);
             synopsisTextView.setText(synopsisStr);
+
+            // Set the action bar title to the movie title
+            getActivity().setTitle(titleStr);
+
 
             if (savedInstanceState == null || !savedInstanceState.containsKey("trailers")) {
                 refreshTrailers();
@@ -168,8 +175,6 @@ public class DetailActivityFragment extends Fragment {
                 }
                 updateReviews((LinearLayout) rootView.findViewById(R.id.llReviewContainer), reviews);
             }
-
-            getActivity().setTitle(titleStr);
 
         }
 
