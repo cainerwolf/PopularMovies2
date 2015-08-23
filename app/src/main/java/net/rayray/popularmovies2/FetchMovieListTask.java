@@ -17,6 +17,14 @@ import java.net.URL;
 
 /**
  * Created by rhawley on 8/15/15.
+ * This class will use the "discover" interface of themoviedb.org to get a list of movies, and
+ * it will return an array of the custom "Movie" class.
+ *
+ * Why don't I get the trailers and the reviews at this time?  In order to save on network usage.
+ * In order to get the list of movies, I make one call to themoviedb.org.  However, in order to get
+ * the list of reviews and trailers, I have to make a minimum of 1 initial call, and then 1 call for
+ * each movie retrieved.  And there's no guarantee that the data pulled will be used at any time,
+ * so let's just get it when we need it - in the detail view.
  */
 public class FetchMovieListTask extends AsyncTask<String, Void, Movie[]> {
 
@@ -68,6 +76,13 @@ public class FetchMovieListTask extends AsyncTask<String, Void, Movie[]> {
                     .appendQueryParameter("sort_by", SORTING_METHOD)
                     .appendQueryParameter("api_key", API_KEY)
                     .build();
+
+            // The code for getting the highest rated movies by itself needs some work.
+            // We're only going to pull movies that have 50 votes or more
+
+            if ( SORTING_METHOD.equals("vote_average") ) {
+                builtUri.buildUpon().appendQueryParameter("vote_count.gte", "50").build();
+            }
 
             URL url = new URL(builtUri.toString());
 
@@ -168,7 +183,8 @@ public class FetchMovieListTask extends AsyncTask<String, Void, Movie[]> {
             String strVoteAverage = movieInfo.getString(MDB_VOTEAVERAGE);
             String strOverview = movieInfo.getString(MDB_OVERVIEW);
 
-            Movies[i] = new Movie(id, strTitle, strReleaseDate, strPosterPath, strVoteAverage, strOverview);
+            Movies[i] = new Movie(id, strTitle, strReleaseDate, strPosterPath, strVoteAverage,
+                    strOverview);
         }
         return Movies;
     }

@@ -5,6 +5,10 @@ import android.os.Parcelable;
 
 /**
  * Created by rhawley on 7/23/15.
+ *
+ * The Movie class contains everything you need to make a movie and a detail view, except
+ * for trailers and reviews, which are handled in the detail view itself.  The class is parcelable,
+ * so that it can be passed in Intents and in Bundles.
  */
 public class Movie implements Parcelable {
     private int id;
@@ -29,7 +33,8 @@ public class Movie implements Parcelable {
         return 0;
     }
 
-    public Movie(int id, String strTitle, String strReleaseDate, String strPosterPath, String strVoteAverage, String strSynopsis) {
+    public Movie(int id, String strTitle, String strReleaseDate, String strPosterPath,
+                 String strVoteAverage, String strSynopsis) {
         this.id = id;
         this.strTitle = strTitle;
         this.strReleaseDate = strReleaseDate;

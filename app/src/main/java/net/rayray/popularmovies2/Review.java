@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 /**
  * Created by rhawley on 7/23/15.
+ * The review class was created to handle reviews, each of which have a reviewer and the review
+ * itself.  It is parcelable, so that it can be handled in bundles (such as saved states).
  */
 public class Review implements Parcelable {
     private String strReviewer;

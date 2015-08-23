@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -112,13 +111,18 @@ public class FetchFavoritesListTask extends AsyncTask<String[], Void, Movie[]> {
     @Override
     protected Movie[] doInBackground(String[]... params) {
 
-        // If we didn't get the setting for how to sort the movies, quit.
+        // If we didn't get the any favorite movies to pull, then quit.
         if (params.length == 0) {
             return null;
         }
 
+        // Get our list of favorite movies, then create a new array of movies to store the
+        // returned values in
         String[] MovieIds = params[0];
         Movie[] Movies = new Movie[MovieIds.length];
+
+        // For each movie, we're going to pull data from themoviedb.org and then add it
+        // to an array
 
         try {
             for (int i=0; i<MovieIds.length; i++) {
@@ -145,8 +149,7 @@ public class FetchFavoritesListTask extends AsyncTask<String[], Void, Movie[]> {
     private Movie getMovie(String movieInfoStr)
             throws JSONException {
 
-        // The following info will be retrieved from the JSON string,
-        // and then added to an array of Movies which will be returned
+        // The following info will be retrieved from the JSON string
         // movie id - id
         // title - title
         // release date - release_date
@@ -172,7 +175,8 @@ public class FetchFavoritesListTask extends AsyncTask<String[], Void, Movie[]> {
         String strVoteAverage = movieInfo.getString(MDB_VOTEAVERAGE);
         String strOverview = movieInfo.getString(MDB_OVERVIEW);
 
-        Movie Movie = new Movie(id, strTitle, strReleaseDate, strPosterPath, strVoteAverage, strOverview);
+        Movie Movie = new Movie(id, strTitle, strReleaseDate, strPosterPath, strVoteAverage,
+                strOverview);
 
         return Movie;
     }

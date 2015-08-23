@@ -60,7 +60,8 @@ public class DetailActivity extends Activity implements DetailActivityFragment.C
         int id = item.getItemId();
 
         // The following lines were taken from the Udacity forums, at
-        // https://discussions.udacity.com/t/bug-artist-list-activity-is-destroyed-on-navigating-up-but-not-back/21076/12?u=raymond_277807911216
+        // https://discussions.udacity.com/t/bug-artist-list-activity-is-destroyed-on-navigating-up-
+        // but-not-back/21076/12?u=raymond_277807911216
         // to fix the problem of a new Main Activity being created when the "Up" button
         // in the top-left of the action bar is clicked
 

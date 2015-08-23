@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 /**
  * Created by rhawley on 7/23/15.
+ * The trailer class was created to handle trailers, each of which have a title and a youtube link.
+ * It is parcelable, so that it can be handled in bundles (such as saved states).
  */
 public class Trailer implements Parcelable {
     private String strName;

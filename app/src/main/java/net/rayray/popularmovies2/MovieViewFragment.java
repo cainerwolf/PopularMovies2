@@ -57,6 +57,9 @@ public class MovieViewFragment extends Fragment {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sortSetting = sharedPref.getString("sort", "popularity.desc");
 
+        // If our sort setting is favorites, then we're going to just pull the list of favorites
+        // using FetchFavoritesListTask.  For anything else, we'll use FetchMovieListTask
+
         if (sortSetting.equals("favorites")) {
             Object[] ob = sharedPref.getStringSet("favorites", new HashSet<String>()).toArray();
             String[] mFavorites = new String[ob.length];
@@ -131,11 +134,6 @@ public class MovieViewFragment extends Fragment {
                 // When a movie poster is clicked, initiate a callback to the MainActivity
                 // to decide whether to launch an intent or start a new Detail Fragment
 
-//                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
-//                        .putExtra("movie", mMovies[position]);
-//
-//                startActivity(detailIntent);
-
                 ((Callback) getActivity())
                         .onItemSelected(mMovies[position]);
 
@@ -154,7 +152,6 @@ public class MovieViewFragment extends Fragment {
             for (int i = 0; i < pa.length ; i++ ) {
                 mMovies[i] = (Movie) pa[i];
             }
-//            mMovies = (Movie[]) savedInstanceState.getParcelableArray("movies");
             updateMovieGrid(mMovies);
         }
 
@@ -166,10 +163,11 @@ public class MovieViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // Use our saved "sortSetting" value to determine if the sorting method has changed.  If it has
-        // then we refresh the movies to pull our new titles.
+        // Use our saved "sortSetting" value to determine if the sorting method has changed.  If it
+        // has then we refresh the movies to pull our new titles.
         if (sortSetting != null) {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences sharedPref = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
             if (!sortSetting.equals(sharedPref.getString("sort", "popularity.desc"))) {
                 refreshMovies();
             }
@@ -180,7 +178,8 @@ public class MovieViewFragment extends Fragment {
 
     public class MovieImageAdapter extends ArrayAdapter<String> {
 
-        public MovieImageAdapter(Context context, int resource, int imageViewResourceId, List<String> objects) {
+        public MovieImageAdapter(Context context, int resource, int imageViewResourceId,
+                                 List<String> objects) {
             super(context, resource, imageViewResourceId, objects);
         }
 
@@ -189,8 +188,8 @@ public class MovieViewFragment extends Fragment {
             ImageView view ;
             if (convertView == null) {
                 view = new ImageView(parent.getContext());
-                // The following two lines were obtained from the Udacity forums
-                // https://discussions.udacity.com/t/troubles-with-gridview-picasso-screen-sizes/25496/3
+            // The following two lines were obtained from the Udacity forums
+            // https://discussions.udacity.com/t/troubles-with-gridview-picasso-screen-sizes/25496/3
                 view.setAdjustViewBounds(true);
                 view.setPadding(0,0,0,0);
             }

@@ -13,7 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class MainActivity extends Activity implements MovieViewFragment.Callback, DetailActivityFragment.Callback{
+public class MainActivity extends Activity implements MovieViewFragment.Callback,
+        DetailActivityFragment.Callback{
 
     private final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
@@ -29,7 +30,8 @@ public class MainActivity extends Activity implements MovieViewFragment.Callback
 
             if ( savedInstanceState == null ) {
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
+                        .replace(R.id.detail_container, new DetailActivityFragment(),
+                                DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -79,6 +81,11 @@ public class MainActivity extends Activity implements MovieViewFragment.Callback
             Intent intent = new Intent(getApplicationContext(),SettingsActivity.class);
             startActivity(intent);
             return true;
+        }
+
+        if (id == R.id.action_favorite) {
+            // Handled in Fragment
+            return false;
         }
 
         return super.onOptionsItemSelected(item);

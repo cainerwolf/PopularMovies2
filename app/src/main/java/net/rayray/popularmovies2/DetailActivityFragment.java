@@ -65,6 +65,7 @@ public class DetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         // Make sure the activity knows that this fragment handles menu options
+        // Was frustrating me for a while until I found this: http://stackoverflow.com/a/8309255
         setHasOptionsMenu(true);
 
     }
@@ -83,6 +84,10 @@ public class DetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
+        // Whether we're loading this fragment from an intent or an argument bundle, let's get
+        // our movie info
+        // If the Intent doesn't have a movie object, or there are no arguments, we're not
+        // going to display anything
         Intent intent = getActivity().getIntent();
         Bundle args = getArguments();
         if ( intent.hasExtra("movie") || args != null) {
@@ -121,6 +126,8 @@ public class DetailActivityFragment extends Fragment {
             // Set the action bar title to the movie title
             getActivity().setTitle(titleStr);
 
+            // Get our trailers and our reviews, either from the saved instance state or by
+            // getting retrieving them from the internet
 
             if (savedInstanceState == null || !savedInstanceState.containsKey("trailers")) {
                 refreshTrailers();

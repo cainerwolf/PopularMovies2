@@ -17,6 +17,7 @@ import java.net.URL;
 
 /**
  * Created by rhawley on 8/15/15.
+ * Fetch reviews from themoviedb.org
  */
 public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
 
@@ -63,7 +64,8 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
         try {
             // Make the URL for the API query
             final String MOVIE_ID = params[0];
-            final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + MOVIE_ID + "/reviews?";
+            final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + MOVIE_ID +
+                    "/reviews?";
             Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                     .appendQueryParameter("api_key", API_KEY)
                     .build();

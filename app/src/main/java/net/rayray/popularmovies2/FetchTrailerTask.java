@@ -64,7 +64,8 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Trailer[]> {
         try {
             // Make the URL for the API query
             final String MOVIE_ID = params[0];
-            final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + MOVIE_ID + "/videos?";
+            final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + MOVIE_ID +
+                    "/videos?";
             Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                     .appendQueryParameter("api_key", API_KEY)
                     .build();
@@ -156,7 +157,8 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Trailer[]> {
             // that has a type of "trailer" and a site of "youtube"
             JSONObject trailerInfo = trailerArray.getJSONObject(i);
 
-            if (trailerInfo.getString(MDB_TYPE).equals("Trailer") && trailerInfo.getString(MDB_SITE).equals("YouTube")) {
+            if (trailerInfo.getString(MDB_TYPE).equals("Trailer") &&
+                    trailerInfo.getString(MDB_SITE).equals("YouTube")) {
                 String strName = trailerInfo.getString(MDB_NAME);
                 String strYoutubeKey = trailerInfo.getString(MDB_YOUTUBE_KEY);
                 tmpTrailer.add(new Trailer(strName,strYoutubeKey));
