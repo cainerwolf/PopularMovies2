@@ -37,7 +37,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
     // Create a callback
     private iCallBack CallBack;
 
-    // Create a Movie Array
+    // Create a Review Array
     private Review[] Reviews;
 
     public FetchReviewsTask(iCallBack CallBack) {

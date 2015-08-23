@@ -20,7 +20,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -52,7 +54,24 @@ public class MovieViewFragment extends Fragment {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sortSetting = sharedPref.getString("sort", "popularity.desc");
 
-        if (sortSetting.equals("favorites")) { Log.v("Favorite", "WE'VE SELECTED FAVORITE, PEOPLE"); }
+        if (sortSetting.equals("favorites")) {
+            Object[] ob = sharedPref.getStringSet("favorites", new HashSet<String>()).toArray();
+            String[] mFavorites = new String[ob.length];
+
+            for (int i = 0; i<ob.length; i++ ) {
+                mFavorites[i] = (String) ob[i];
+            }
+
+            FetchFavoritesListTask movieTask = new FetchFavoritesListTask(
+                    new FetchFavoritesListTask.iCallBack() {
+                        @Override
+                        public void onAsyncTaskCompleted(Movie[] Movies) {
+                            mMovies = Movies;
+                            updateMovieGrid(mMovies);
+                        }
+            });
+            movieTask.execute(mFavorites);
+        }
         else {
 
             FetchMovieListTask movieTask = new FetchMovieListTask(

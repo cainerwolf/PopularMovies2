@@ -137,6 +137,7 @@ public class FetchMovieListTask extends AsyncTask<String, Void, Movie[]> {
 
         // The following info will be retrieved from the JSON string,
         // and then added to an array of Movies which will be returned
+        // movie id - id
         // title - title
         // release date - release_date
         // movie poster - poster_path
