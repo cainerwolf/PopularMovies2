@@ -5,7 +5,8 @@
         android:title="Favorite"
         android:orderInCategory="99"
         android:icon="@mipmap/ic_star_border_black_48dp"
-        android:showAsAction="always" />
+        android:showAsAction="always"
+        android:visible="false" />
 
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"

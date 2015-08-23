@@ -7,27 +7,19 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.HashSet;
 import java.util.Set;
 
 
-public class DetailActivity extends Activity {
+public class DetailActivity extends Activity implements DetailActivityFragment.Callback {
 
-    private String movieId;
+    private String mMovieId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Get the movieID from the Intent
-        Intent intent = getIntent();
-        if ( intent.hasExtra("movie") ) {
-            Movie movie = intent.getParcelableExtra("movie");
-            this.movieId = movie.getIdAsString();
-            // Refresh the options menu now that we have the movie id
-            invalidateOptionsMenu();
-        }
 
         setContentView(R.layout.activity_detail);
     }
@@ -37,25 +29,26 @@ public class DetailActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_detail, menu);
 
-        // Set the favorites icon based on preferences
-        // Get favorites icon
-        MenuItem favItem = menu.findItem(R.id.action_favorite);
+        // If we have a movieId stored, then let's use it with the icon
 
-        // Check to see if we have the movie ID yet, and if we do let's see if its a favorite
-        if ( this.movieId != null ) {
-            // Get the list of favorite movies from Shared Preferences
+        if (mMovieId != null) {
+
+            // Get favorites menu item
+            MenuItem mFavItem = menu.findItem(R.id.action_favorite);
+
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             Set<String> prefFavorites = sharedPref.getStringSet("favorites", new HashSet<String>());
 
             // If the movie is a favorite, make sure we use the filled-in star icon
             // If the movie is not a favorite, use the empty star icon
-            if (prefFavorites.contains(movieId)) {
-                favItem.setIcon(R.mipmap.ic_star_black_48dp);
+            if (prefFavorites.contains(mMovieId)) {
+                mFavItem.setIcon(R.mipmap.ic_star_black_48dp);
+                mFavItem.setVisible(true);
             } else {
-                favItem.setIcon(R.mipmap.ic_star_border_black_48dp);
+                mFavItem.setIcon(R.mipmap.ic_star_border_black_48dp);
+                mFavItem.setVisible(true);
             }
         }
-
         return true;
     }
 
@@ -92,4 +85,50 @@ public class DetailActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void onFavoritesClicked(String movieId) {
+        // This method will either add or remove movieId from the SharedPreferences favorites list
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor sharedPrefEditor = sharedPref.edit();
+        Set<String> prefFavorites = sharedPref.getStringSet("favorites", new HashSet<String>());
+
+        Set<String> favoritesTemp = new HashSet<String>();
+
+        // Per the android development documentation, it does not recommend making any changes
+        // to a Set<String> that has been retreived from SharedPreferences.  For that reason, I
+        // copy all the items to a temporary Set<String>, and maniuplate that temporary Set instead
+        favoritesTemp.addAll(prefFavorites);
+
+        if (favoritesTemp.contains(movieId)) {
+            Toast.makeText(this.getApplicationContext(), "Removing Favorite!",
+                    Toast.LENGTH_SHORT).show();
+            favoritesTemp.remove(movieId);
+            sharedPrefEditor.putStringSet("favorites", favoritesTemp)
+                    .apply();
+        } else {
+            Toast.makeText(this.getApplicationContext(), "Adding Favorite!",
+                    Toast.LENGTH_SHORT).show();
+            favoritesTemp.add(movieId);
+            sharedPrefEditor.putStringSet("favorites", favoritesTemp)
+                    .apply();
+        }
+
+        // Adjust the icon
+        isFavorite(movieId);
+
+    }
+
+    public void isFavorite(String movieId) {
+        // This method will set the movieId for the Activity, and then force the activity
+        // to redraw the action bar.
+
+        // If the incoming movieId is null, then we're not doing anything
+
+        if (movieId != null ) {
+            mMovieId = movieId;
+            invalidateOptionsMenu();
+        }
+
+    }
+
 }

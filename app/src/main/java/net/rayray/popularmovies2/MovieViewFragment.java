@@ -2,12 +2,10 @@ package net.rayray.popularmovies2;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -40,6 +37,12 @@ public class MovieViewFragment extends Fragment {
     private String sortSetting;
 
     public MovieViewFragment() {
+    }
+
+    public interface Callback {
+        // Callback used when someone clicks on an item
+
+        void onItemSelected(Movie movie);
     }
 
     @Override
@@ -125,14 +128,17 @@ public class MovieViewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // When a movie poster is clicked, start the detail activity.
-                // A Movie object is passed to the Detail Activity, which is then retrieved
-                // as a parcel.
+                // When a movie poster is clicked, initiate a callback to the MainActivity
+                // to decide whether to launch an intent or start a new Detail Fragment
 
-                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("movie", mMovies[position]);
+//                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
+//                        .putExtra("movie", mMovies[position]);
+//
+//                startActivity(detailIntent);
 
-                startActivity(detailIntent);
+                ((Callback) getActivity())
+                        .onItemSelected(mMovies[position]);
+
             }
         });
 

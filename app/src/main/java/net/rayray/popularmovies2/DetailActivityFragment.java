@@ -3,11 +3,9 @@ package net.rayray.popularmovies2;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,12 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -33,12 +27,12 @@ public class DetailActivityFragment extends Fragment {
     private Trailer[] trailers;
     private Review[] reviews;
 
-    // Create a shared preferences object for use with determining and adding/removing movie favorites
-    private SharedPreferences sharedPref;
+    public interface Callback {
+        // Used for favorites handling
 
-    // Temporary Set<String> to hold the favorites in, so we aren't messing with the set returned
-    // from SharedPreferences
-    private Set<String> favoritesTemp = new HashSet<String>();
+        void onFavoritesClicked(String movieId) ;
+        void isFavorite(String movieId);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -46,39 +40,11 @@ public class DetailActivityFragment extends Fragment {
         int id = item.getItemId();
 
         if ( id == R.id.action_favorite ) {
-            adjustFavorite();
+            // If the favorites action bar icon is clicked, then add/remove it in the activity
+            ((Callback) getActivity()).onFavoritesClicked(movie.getIdAsString());
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // Check to see if the movie is a favorite
-    public boolean isFavorite() {
-        return favoritesTemp.contains(movie.getIdAsString());
-    }
-
-
-    // This happens when someone clicks the "favorite" icon in the action bar
-    // If the movie is already a favorite, then remove it from the favorites.
-    // If the movie is not a favorite, then add it to the favorites
-    public void adjustFavorite() {
-
-        if ( isFavorite() ) {
-            Toast.makeText(getActivity().getApplicationContext(), "Removing Favorite!", Toast.LENGTH_SHORT).show();
-            favoritesTemp.remove(movie.getIdAsString());
-            SharedPreferences.Editor sharedPrefEditor = sharedPref.edit();
-            sharedPrefEditor.putStringSet("favorites", favoritesTemp);
-            sharedPrefEditor.apply();
-        } else {
-            Toast.makeText(getActivity().getApplicationContext(), "Adding Favorite!", Toast.LENGTH_SHORT).show();
-            favoritesTemp.add(movie.getIdAsString());
-            SharedPreferences.Editor sharedPrefEditor = sharedPref.edit();
-            sharedPrefEditor.putStringSet("favorites", favoritesTemp);
-            sharedPrefEditor.apply();
-        }
-
-        // This updates the Favorite Icon by forcing the activity to redraw the action bar
-        getActivity().invalidateOptionsMenu();
     }
 
     public DetailActivityFragment() {
@@ -101,22 +67,15 @@ public class DetailActivityFragment extends Fragment {
         // Make sure the activity knows that this fragment handles menu options
         setHasOptionsMenu(true);
 
-        // Get SharedPreferences
-        this.sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    }
 
-        // Create a temporary String Set based on the set returned from SharedPreferences
-        // Based on comments made here, it is a bad idea to change any within the set returned
-        // by Shared Preferences
-        // http://developer.android.com/reference/android/content/SharedPreferences.html#getStringSet(java.lang.String, java.util.Set<java.lang.String>)
-        // If the set returned from SharedPreferences is null (there are no SharedPreferences)
-        // then we'll just make sure our temporary set is empty
-        Set<String> favorites = sharedPref.getStringSet("favorites", null);
-        if ( favorites == null ) {
-            favoritesTemp.clear();
-        } else {
-            favoritesTemp.clear();
-            favoritesTemp.addAll(favorites);
-        }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // If there's a movie loaded, then let's set the Action Bar icon
+        if ( movie != null ) { ((Callback) getActivity()).isFavorite(movie.getIdAsString()); }
+
     }
 
     @Override
@@ -125,15 +84,20 @@ public class DetailActivityFragment extends Fragment {
         View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
-        if (intent.hasExtra("movie") && intent != null) {
+        Bundle args = getArguments();
+        if ( intent.hasExtra("movie") || args != null) {
             //Get the movie object from the Intent
-            movie = intent.getParcelableExtra("movie");
+            if ( intent.hasExtra("movie") ) {
+                movie = intent.getParcelableExtra("movie");
+            } else {
+                movie = args.getParcelable("movie");
+            }
 
             // Create our objects for the ImageView and TextViews that need to be populated
             ImageView posterImageView = (ImageView) rootView.findViewById(R.id.posterImageView);
             TextView titleTextView = (TextView) rootView.findViewById(R.id.titleTextView);
-            TextView voteAverageTextView = (TextView) rootView.findViewById(R.id.voteAverageTextView);
-            TextView releaseDateTextView = (TextView) rootView.findViewById(R.id.releaseDateTextView);
+            TextView voteAverageTextView=(TextView) rootView.findViewById(R.id.voteAverageTextView);
+            TextView releaseDateTextView=(TextView) rootView.findViewById(R.id.releaseDateTextView);
             TextView synopsisTextView = (TextView) rootView.findViewById(R.id.synopsisTextView);
 
             // Get our Strings from the movie object passed in the Intent
@@ -150,6 +114,10 @@ public class DetailActivityFragment extends Fragment {
             releaseDateTextView.setText(releaseDateStr);
             synopsisTextView.setText(synopsisStr);
 
+            // Reveal the labels
+            (rootView.findViewById(R.id.tvReleaseDate)).setVisibility(View.VISIBLE);
+            (rootView.findViewById(R.id.tvVoteAverage)).setVisibility(View.VISIBLE);
+
             // Set the action bar title to the movie title
             getActivity().setTitle(titleStr);
 
@@ -162,7 +130,8 @@ public class DetailActivityFragment extends Fragment {
                 for (int i = 0; i<pa.length; i++) {
                     trailers[i] = (Trailer) pa[i];
                 }
-                updateTrailers((LinearLayout) rootView.findViewById(R.id.llTrailerContainer), trailers);
+                updateTrailers((LinearLayout) rootView.findViewById(R.id.llTrailerContainer),
+                        trailers);
             }
 
             if (savedInstanceState == null || !savedInstanceState.containsKey("reviews")) {
@@ -173,7 +142,8 @@ public class DetailActivityFragment extends Fragment {
                 for (int i = 0; i < pa.length ; i++ ) {
                     reviews[i] = (Review) pa[i];
                 }
-                updateReviews((LinearLayout) rootView.findViewById(R.id.llReviewContainer), reviews);
+                updateReviews((LinearLayout) rootView.findViewById(R.id.llReviewContainer),
+                        reviews);
             }
 
         }
@@ -264,7 +234,8 @@ public class DetailActivityFragment extends Fragment {
         reviewsTask.execute(movie.getIdAsString());
     }
 
-    // Childview class example taken from http://stackoverflow.com/questions/14798826/duplicate-views-on-android-during-run-time
+    // Childview class example taken from
+    // http://stackoverflow.com/questions/14798826/duplicate-views-on-android-during-run-time
 
     public class TrailerView extends LinearLayout {
 
@@ -291,7 +262,8 @@ public class DetailActivityFragment extends Fragment {
             OnClickListener click = new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Youtube Intent taken from http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
+                    // Youtube Intent taken from http://stackoverflow.com/questions/574195/android-
+                    // youtube-app-play-video-intent
                     Intent intent = new Intent(
                             Intent.ACTION_VIEW,
                             Uri.parse("http://www.youtube.com/watch?v=" + newText));
