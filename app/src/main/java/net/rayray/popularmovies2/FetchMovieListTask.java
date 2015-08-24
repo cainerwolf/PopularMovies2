@@ -80,8 +80,8 @@ public class FetchMovieListTask extends AsyncTask<String, Void, Movie[]> {
             // The code for getting the highest rated movies by itself needs some work.
             // We're only going to pull movies that have 50 votes or more
 
-            if ( SORTING_METHOD.equals("vote_average") ) {
-                builtUri.buildUpon().appendQueryParameter("vote_count.gte", "50").build();
+            if ( SORTING_METHOD.equals("vote_average.desc") ) {
+                builtUri = builtUri.buildUpon().appendQueryParameter("vote_count.gte", "50").build();
             }
 
             URL url = new URL(builtUri.toString());
